@@ -15,7 +15,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Using blit to draw tiles')
 
 #Load Game Font
-custom_font = pygame.font.Font('assets/fonts/Brainfish_Rush.ttf', 128)
+custom_font = pygame.font.Font('assets/fonts/Brainfish_Rush.ttf', 90)
 
 def draw_background(screen):
     #Load our tiles from the assets folder
@@ -41,8 +41,7 @@ def draw_background(screen):
 
     #draw the text
     text = custom_font.render('Chomp', True, (255, 29, 0))
-    screen.blit(text, (screen_width/2-text.get_width()/2, screen_height/2-text.get_height()/2))
-
+    screen.blit(text, (screen_width/2-text.get_width()/2, text.get_height()/2-0.5*tile_size))
 def draw_fishes(surf):
     #Load our fish files onto our surface
     green_fish = pygame.image.load('assets/sprites/green_fish.png').convert()
@@ -55,22 +54,22 @@ def draw_fishes(surf):
     fishes = [green_fish, orange_fish, puffer_fish]
 
     #distribute our fish on the screen randomly
-    for _ in range (5):
-        x = random.randint(0, screen_width)
-        y = random.randint(0, screen_height-2*tile_size)
+    for _ in range(5):
+        x = random.randint(0, screen_width - 2 * tile_size)
+        y = random.randint(80, screen_height - 2 * tile_size)
         f = random.randint(0, 2)
-        if x > screen_width/2:
+        if x > screen_width / 2:
             if f == 0:
-                pygame.transform.flip(green_fish, True, False)
-                surf.blit(green_fish, (x,y))
+                green_fish = pygame.transform.flip(green_fish, True, False)
+                surf.blit(green_fish, (x, y))
             elif f == 1:
-                pygame.transform.flip(orange_fish, True, False)
+                orange_fish = pygame.transform.flip(orange_fish, True, False)
                 surf.blit(orange_fish, (x, y))
             else:
-                pygame.transform.flip(puffer_fish, True, False)
+                puffer_fish = pygame.transform.flip(puffer_fish, True, False)
                 surf.blit(puffer_fish, (x, y))
         else:
-            surf.blit(fishes[f], (x,y))
+            surf.blit(fishes[f], (x, y))
 
 #Main loop
 running = True
