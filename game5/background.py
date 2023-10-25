@@ -1,20 +1,6 @@
 import pygame
-import sys
+from game_parameters import *
 import random
-from fish import Fish, fishes #importing fish module and Fish class
-
-#initialize pygame
-pygame.init()
-
-#screen dimensions
-screen_width = 800
-screen_height = 600
-tile_size = 64
-
-surf = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Using blit to draw tiles')
-#Load game font
-custom_font = pygame.font.Font("../assets/Fonts/Brainfish_Rush.ttf", 128)
 def draw_background(surf):
     #Load our tiles from the assets folder
     water = pygame.image.load("../assets/Sprites/water.png").convert()
@@ -37,25 +23,6 @@ def draw_background(surf):
         surf.blit(seagrass, (x,screen_height-tile_size*2))
 
     #draw the text
+    custom_font = pygame.font.Font("../assets/Fonts/Brainfish_Rush.ttf", 128)
     text = custom_font.render("Chomp",True, (255,29,0))
     surf.blit(text, (screen_width/2-text.get_width()/2, 0))
-    # screen_height/2-text.get_height()/2
-
-# draw fish on the screen
-for _ in range(5):
-    fishes.add(Fish(random.randint(0, screen_width-tile_size*2),random.randint(100, screen_height-tile_size*2)))
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    #draw background
-    surf.blit(background, (0,0))
-
-    fishes.draw(background)
-    #update display
-    pygame.display.flip()
-
-    #pygame.surface.transform.flip()
-pygame.quit()
