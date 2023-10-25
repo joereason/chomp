@@ -4,6 +4,9 @@ import sys
 from game_parameters import *
 from background import draw_background
 
+#initialize pygame
+pygame.init()
+
 #create screen
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Learning to get event types')
@@ -20,9 +23,9 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                print('You pressed the key up key')
+                print('You pressed the up key')
             if event.key == pygame.K_DOWN:
-                print('You pressed the key down key')
+                print('You pressed the down key')
 
 
 
@@ -31,6 +34,9 @@ while running:
 
     #update the display
     pygame.display.flip()
+
+    #limit the frame rate
+    #clock.tick(60)
 
 
 
