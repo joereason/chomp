@@ -26,6 +26,10 @@ while running:
                 print('You pressed the up key')
             if event.key == pygame.K_DOWN:
                 print('You pressed the down key')
+            if event.key == pygame.K_LEFT:
+                print('You pressed the left arrow')
+            if event.key == pygame.K_RIGHT:
+                print('You pressed the right arrow')
 
 
 
