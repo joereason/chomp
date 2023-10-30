@@ -2,12 +2,12 @@ import pygame
 import sys
 import random
 
-
 #Import all our necessary files
 from fish import Fish, fishes
-from background import draw_background
+from background import draw_background, add_fish, add_enemies
 from game_parameters import *
 from player import Player
+from enemy import enemies, Enemy
 
 #Initialize pygame
 pygame.init()
@@ -25,8 +25,10 @@ background = screen.copy()
 draw_background(background)
 
 #Draw fish on the screen
-for _ in range(5):
-    fishes.add(Fish(random.randint(screen_width, screen_width*1.5),random.randint(tile_size, screen_height-2*tile_size)))
+add_fish(5)
+
+#Add enemies to the screen
+add_enemies(5)
 
 #Draw player fish
 player = Player(screen_width/2, screen_height/2)
@@ -67,6 +69,9 @@ while running:
     # update our fish location
     fishes.update()
 
+    #draw enemy fish
+    enemies.update()
+
     # update player fish
     player.update()
 
@@ -81,8 +86,15 @@ while running:
 
         #draw more green fish on the screen
         for _ in range(len(result)):
-            fishes.add(Fish(random.randint(screen_width, screen_width * 1.5),
-            random.randint(tile_size, screen_height - 2 * tile_size)))
+            add_fish(1)
+            #fishes.add(Fish(random.randint(screen_width, screen_width * 1.5),
+            #            random.randint(tile_size, screen_height - 2 * tile_size)))
+
+    #check if player collides with enemy fish
+    result = pygame.sprite.spritecollide(player, enemies, True)
+    if result:
+        for _ in range(len(result)):
+            add_enemies(1)
 
     for fish in fishes:
         if fish.rect.x < -fish.rect.width: #use the tile size
@@ -90,11 +102,19 @@ while running:
             fishes.add(Fish(random.randint(screen_width, screen_width + 50),
                             random.randint(tile_size, screen_height - 2 * tile_size)))
 
+    for enemy in enemies:
+        if fish.rect.x < -fish.rect.width:  # use the tile size
+            enemies.remove(enemy)  # remove the fish from the sprite group
+            enemies.add(Fish(random.randint(screen_width, screen_width + 50),
+                            random.randint(tile_size, screen_height - 2 * tile_size)))
+
     #draw the fish
     fishes.draw(screen)
 
     #draw the player fish
     player.draw(screen)
+
+    enemies.draw(screen)
 
     #blit score text
     text = score_font.render(f'{score}', True, (255, 0, 0))
