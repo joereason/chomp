@@ -2,39 +2,42 @@ import pygame
 from game_parameters import *
 import random
 from fish import Fish, fishes
-from enemy import Enemy, enemies
+from enemy import Enemy,enemies
+
 def draw_background(surf):
-    #Load our tiles from the assets folder
-    water = pygame.image.load("../assets/Sprites/water.png").convert()
-    sand = pygame.image.load("../assets/Sprites/sand_top.png").convert()
-    seagrass = pygame.image.load("../assets/Sprites/seagrass.png").convert()
-    #make PNGS transparent
+    #load our tiles
+    water = pygame.image.load("../assets/sprites/water.png").convert()
+    sand = pygame.image.load("../assets/sprites/sand_top.png").convert()
+    seagrass = pygame.image.load("../assets/sprites/seagrass.png").convert()
+    #use png transparency
     sand.set_colorkey((0,0,0))
     seagrass.set_colorkey((0,0,0))
 
-    #fill screen with water
-    for x in range(0, screen_width, tile_size):
-        for y in range(0, screen_height, tile_size):
+    #fill the screen
+    for x in range(0, SCREEN_WIDTH, TILE_SIZE):
+        for y in range(0, SCREEN_HEIGHT, TILE_SIZE):
             surf.blit(water, (x,y))
-    #draw sandy bottom
-    for x in range(0, screen_width, tile_size):
-        surf.blit(sand, (x, screen_height-tile_size))
-    #draw sea_grass
-    for _ in range(26):
-        x = random.randint(0, screen_width)
-        surf.blit(seagrass, (x,screen_height-tile_size*2))
+
+    #draw the sandy bottom
+    for x in range(0, SCREEN_WIDTH, TILE_SIZE):
+        surf.blit(sand, (x, SCREEN_HEIGHT-TILE_SIZE))
+
+    #add seagrass randomly at the bottom of the beach
+    for _ in range(5):
+        x = random.randint(0, SCREEN_HEIGHT)
+        surf.blit(seagrass, (x, SCREEN_HEIGHT-TILE_SIZE*2))
 
     #draw the text
-    custom_font = pygame.font.Font("../assets/Fonts/Brainfish_Rush.ttf", 128)
-    text = custom_font.render("Chomp",True, (255,29,0))
-    surf.blit(text, (screen_width/2-text.get_width()/2, 0))
+    custom_font = pygame.font.Font("../assets/fonts/Brainfish_Rush.ttf", 48)
+    text = custom_font.render("Chomp", True, (255, 0, 0))
+    surf.blit(text, (SCREEN_WIDTH/2 - text.get_width()/2, 0))
 
 def add_fish(num_fish):
     for _ in range(num_fish):
-        fishes.add(Fish(random.randint(screen_width, screen_width * 1.5),
-                        random.randint(tile_size, screen_height - 2 * tile_size)))
+        fishes.add(Fish(random.randint(SCREEN_WIDTH, SCREEN_WIDTH + 20),
+                        random.randint(TILE_SIZE, SCREEN_HEIGHT - 2 * TILE_SIZE)))
 
-def add_enemies(num_enemies):
-    for _ in range(num_enemies):
-        enemies.add(Fish(random.randint(screen_width, screen_width * 1.5),
-                        random.randint(tile_size, screen_height - 2 * tile_size)))
+def add_enemies(num_ememies):
+    for _ in range(num_ememies):
+        enemies.add(Enemy(random.randint(SCREEN_WIDTH, SCREEN_WIDTH +20),
+                        random.randint(TILE_SIZE, SCREEN_HEIGHT - 2 * TILE_SIZE)))

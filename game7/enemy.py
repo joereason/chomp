@@ -13,7 +13,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
-        self.speed = MAX_SPEED
+        self.speed = random.uniform(MIN_SPEED, MAX_SPEED)
         self.rect.center = (x,y)
 
     def update(self):

@@ -1,131 +1,123 @@
 import pygame
-import sys
 import random
+import sys
 
-#Import all our necessary files
-from fish import Fish, fishes
-from background import draw_background, add_fish, add_enemies
 from game_parameters import *
+from fish import Fish, fishes
+from enemy import Enemy, enemies
+from background import draw_background, add_fish, add_enemies
 from player import Player
-from enemy import enemies, Enemy
 
-#Initialize pygame
+#initialize pygame
 pygame.init()
 
-#Create the screen
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Adding a player fish')
+#create screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Adding enemy fish on the screen')
 
-#Create the clock object
+#clock object
 clock = pygame.time.Clock()
 
-#Main loop
+#Main Loop
 running = True
 background = screen.copy()
 draw_background(background)
 
-#Draw fish on the screen
+#draw fish on the screen
 add_fish(5)
 
-#Add enemies to the screen
-add_enemies(5)
+#draw enemy fish on screen
+add_enemies(6)
 
-#Draw player fish
-player = Player(screen_width/2, screen_height/2)
+#create a player fish
+player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
-#load new font to keep source
+#initialize score for fish game
 score = 0
-score_font = pygame.font.Font("../assets/Fonts/Black_Crayon.ttf", 60)
+score_font = pygame.font.Font("../assets/fonts/Black_Crayon.ttf", 48)
+#text = score_font.render(f"{score}", True, (255, 0, 0))
 
-#load a sound to our game
-chomp = pygame.mixer.Sound('../assets/sounds/villager.wav')
+#load the sound effects
+chomp = pygame.mixer.Sound("../assets/sounds/villager.wav")
 
-#Placeholder for a orange player fish
 while running:
     for event in pygame.event.get():
-        #print(event.type)
         if event.type == pygame.QUIT:
             running = False
-        #control our player fish with arrow keys
-        #player.stop()
+        #control fish with keyboard
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_UP:
                 player.move_up()
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_DOWN:
                 player.move_down()
-            if event.key == pygame.K_a:
+            if event.key == pygame.K_LEFT:
                 player.move_left()
-                player.reverse()
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_RIGHT:
                 player.move_right()
-                player.forward()
 
+        #will work okay if a single player game
         if event.type == pygame.KEYUP:
             player.stop()
+
 
     # draw background
     screen.blit(background, (0, 0))
 
-    # update our fish location
+    #draw green fish
     fishes.update()
 
     #draw enemy fish
     enemies.update()
 
-    # update player fish
+    #draw player fish
     player.update()
 
-    #check for collisions between our player and fish - use group collision method
+    #check for player and green fish collisions
     result = pygame.sprite.spritecollide(player, fishes, True)
-    #print(result)
     if result:
         #play chomp sound
         pygame.mixer.Sound.play(chomp)
-
         score += len(result)
+        # draw more green fish on the screen
+        add_fish(len(result))
 
-        #draw more green fish on the screen
-        for _ in range(len(result)):
-            add_fish(1)
-            #fishes.add(Fish(random.randint(screen_width, screen_width * 1.5),
-            #            random.randint(tile_size, screen_height - 2 * tile_size)))
-
-    #check if player collides with enemy fish
+    # check for player and enemy fish collisions
     result = pygame.sprite.spritecollide(player, enemies, True)
     if result:
-        for _ in range(len(result)):
+        # play chomp sound
+        pygame.mixer.Sound.play(chomp)
+        # placeholder for losing lives
+        # draw more enemy fish on the screen
+        add_enemies(len(result))
+
+
+    # check if any fish is off the screen
+    for fish in fishes:
+        if fish.rect.x < -fish.rect.width:  # use the tile size
+            fishes.remove(fish)  # remove the fish from the sprite group
+            add_fish(1)
+
+    # check if any enemy is off the screen
+    for enemy in enemies:
+        if enemy.rect.x < -enemy.rect.width:  # use the tile size
+            enemies.remove(enemy)  # remove the fish from the sprite group
             add_enemies(1)
 
-    for fish in fishes:
-        if fish.rect.x < -fish.rect.width: #use the tile size
-            fishes.remove(fish) #remove the fish from the sprite group
-            fishes.add(Fish(random.randint(screen_width, screen_width + 50),
-                            random.randint(tile_size, screen_height - 2 * tile_size)))
-
-    for enemy in enemies:
-        if fish.rect.x < -fish.rect.width:  # use the tile size
-            enemies.remove(enemy)  # remove the fish from the sprite group
-            enemies.add(Fish(random.randint(screen_width, screen_width + 50),
-                            random.randint(tile_size, screen_height - 2 * tile_size)))
-
-    #draw the fish
+    #draw game objects
     fishes.draw(screen)
-
-    #draw the player fish
     player.draw(screen)
-
     enemies.draw(screen)
 
-    #blit score text
-    text = score_font.render(f'{score}', True, (255, 0, 0))
-    screen.blit(text, (screen_width - text.get_width()/2-15, 0))
+    #draw the score on the screen
+    text = score_font.render(f"{score}", True, (255, 0, 0))
+    screen.blit(text, (SCREEN_WIDTH-TILE_SIZE, 0))
 
-    #update the display
+    # update the display
     pygame.display.flip()
 
-    #limit the frame rate
+    # limit the frame rate
     clock.tick(60)
 
-#quit pygame
+# quit pygame
 pygame.quit()
 sys.exit()
