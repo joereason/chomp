@@ -3,8 +3,8 @@ import random
 import sys
 
 from game_parameters import *
-from fish import Fish, fishes
-from enemy import Enemy, enemies
+from fish import fishes
+from enemy import enemies
 from background import draw_background, add_fish, add_enemies
 from player import Player
 
@@ -39,8 +39,17 @@ score_font = pygame.font.Font("../assets/fonts/Black_Crayon.ttf", 48)
 
 #load the sound effects
 chomp = pygame.mixer.Sound("../assets/sounds/villager.wav")
+hurt = pygame.mixer.Sound('../assets/sounds/hurt.wav')
+bubbles = pygame.mixer.Sound('../assets/sounds/bubbles.wav')
 
-while running:
+#add alternate and game over
+life_icon = pygame.image.load('../assets/sprites/orange_fish_alt.png').convert()
+life_icon.set_colorkey((0, 0, 0))
+
+#set the number of lives
+lives = NUM_LIVES
+
+while lives > 0:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -85,8 +94,9 @@ while running:
     result = pygame.sprite.spritecollide(player, enemies, True)
     if result:
         # play chomp sound
-        pygame.mixer.Sound.play(chomp)
+        pygame.mixer.Sound.play(hurt)
         # placeholder for losing lives
+        lives -= len(result)
         # draw more enemy fish on the screen
         add_enemies(len(result))
 
@@ -112,12 +122,40 @@ while running:
     text = score_font.render(f"{score}", True, (255, 0, 0))
     screen.blit(text, (SCREEN_WIDTH-TILE_SIZE, 0))
 
+    #draw lives in the lower left corner
+    for i in range(lives):
+        screen.blit(life_icon, (i*TILE_SIZE, SCREEN_HEIGHT-TILE_SIZE))
+
     # update the display
     pygame.display.flip()
 
     # limit the frame rate
     clock.tick(60)
 
-# quit pygame
-pygame.quit()
-sys.exit()
+#create new background when game over
+screen.blit(background, (0, 0))
+
+#show game over message
+message = score_font.render('GAME OVER', True, (0, 0, 0))
+screen.blit(message, (SCREEN_WIDTH / 2 - message.get_width() / 2, SCREEN_HEIGHT / 2))
+
+#show final score
+score_text = score_font.render(f'Score: {score}', True, (0, 0, 0))
+screen.blit(score_text, (SCREEN_WIDTH / 2 - score_text.get_width() / 2, SCREEN_HEIGHT / 2 + score_text.get_height()))
+
+#update display
+pygame.display.flip()
+
+#play game over sound effect
+pygame.mixer.Sound.play(bubbles)
+
+#wait for user to exit the game
+
+while True:
+    #This is where you would add 'play again' or add other levels
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            #Quit pygame
+            pygame.quit()
+            sys.exit()
+

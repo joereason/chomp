@@ -6,3 +6,5 @@ TILE_SIZE = 64
 MIN_SPEED = 0.5 #pixels per frame
 MAX_SPEED = 3.0
 PLAYER_SPEED = 3.0
+
+NUM_LIVES = 3
